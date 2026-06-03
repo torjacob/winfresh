@@ -19,8 +19,8 @@ Get-CimInstance -Class Win32_UserProfile | Where-Object {
     $_.LocalPath -notlike "*\Public" -and 
     $_.LocalPath -notlike "*\Default" -and
     
-    $UserName = [System.IO.Path]::GetFileName($_.LocalPath)
-    $KeepUsers -notcontains $UserName
+    $KeepUsers -notcontains [System.IO.Path]::GetFileName($_.LocalPath)
+
 } | Remove-CimInstance -ErrorAction SilentlyContinue
 
 Write-Host "Removing any orphaned folders..." -ForegroundColor Cyan
