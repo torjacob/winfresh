@@ -3,7 +3,6 @@ $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIden
 if (-not $isAdmin) {
     Write-Host "Not running in an elevated shell. Relaunching as administrator..." -ForegroundColor Yellow
     Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -Command `"irm 'https://raw.githubusercontent.com/torjacob/winfresh/refs/heads/main/winfresh.ps1' | iex`"" -Verb RunAs
-    Exit
 }
 
 Write-Host "Running as administrator." -ForegroundColor Green
