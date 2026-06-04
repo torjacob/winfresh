@@ -2,7 +2,15 @@ $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIden
 
 if (-not $isAdmin) {
     Write-Host "Not running in an elevated shell. Relaunching as administrator..." -ForegroundColor Yellow
-    Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -Command `"irm 'https://raw.githubusercontent.com/torjacob/winfresh/refs/heads/main/winfresh.ps1' | iex`"" -Verb RunAs
+    
+    $Arguments = @(
+        "-NoProfile",
+        "-ExecutionPolicy", "Bypass",
+        "-Command", "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; iex (irm 'https://raw.githubusercontent.com/torjacob/winfresh/refs/heads/main/winfresh.ps1') }"
+    )
+    
+    Start-Process powershell -ArgumentList $Arguments -Verb RunAs
+    exit
 }
 
 Write-Host "Running as administrator." -ForegroundColor Green
