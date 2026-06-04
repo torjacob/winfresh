@@ -89,7 +89,7 @@ $WinUtilConfigPath = "$env:TEMP\winutil_config.json"
 Invoke-WebRequest -Uri $WinUtilConfigUrl -OutFile $WinUtilConfigPath -ErrorAction SilentlyContinue
 
 if (Test-Path $WinUtilConfigPath) {
-    & ([ScriptBlock]::Create((irm "https://christitus.com/win"))) -Config $WinUtilConfigPath
+    & ([ScriptBlock]::Create((irm "https://christitus.com/win"))) -Run -Config $WinUtilConfigPath
 } else {
     irm "https://christitus.com/win" | iex
 }
@@ -108,6 +108,7 @@ Invoke-WebRequest -Uri $OOCfgUrl -OutFile "$OODir\oosu10pp_config.cfg"
 if (Test-Path "$OODir\oosu10pp_config.cfg") {
     Start-Process -FilePath "$OODir\oosu10pp.exe" -ArgumentList "`"$OODir\oosu10pp_config.cfg`" /g /quiet" -NoNewWindow -Wait
 } else {
+    Write-Host "Config not found, falling back to GUI..." -ForegroundColor Yellow
     Start-Process -FilePath "$OODir\oosu10pp.exe" -ArgumentList "/o /quiet" -NoNewWindow -Wait
 }
 
