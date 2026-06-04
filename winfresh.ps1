@@ -105,7 +105,7 @@ New-Item -ItemType Directory -Path $OODir -Force | Out-Null
 Invoke-WebRequest -Uri $OOExeUrl -OutFile "$OODir\oosu10pp.exe"
 Invoke-WebRequest -Uri $OOCfgUrl -OutFile "$OODir\oosu10pp_config.cfg"
 
-if (Test-Path "$OODir\custom_config.cfg") {
+if (Test-Path "$OODir\oosu10pp_config.cfg") {
     Start-Process -FilePath "$OODir\oosu10pp.exe" -ArgumentList "`"$OODir\oosu10pp_config.cfg`" /g /quiet" -NoNewWindow -Wait
 } else {
     Start-Process -FilePath "$OODir\oosu10pp.exe" -ArgumentList "/o /quiet" -NoNewWindow -Wait
