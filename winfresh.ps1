@@ -115,7 +115,7 @@ foreach ($App in $OfficeApps) {
                 Start-Process -FilePath $ExePath -ArgumentList $SilentArgs -NoNewWindow -Wait
             }
         } 
-        elif ($App.UninstallString -match "OfficeClickToRun") {
+        elseif ($App.UninstallString -match "OfficeClickToRun") {
             $ProductPattern = "productstoremove=([^ ]+)"
             $ProductId = "O365ProPlusRetail"
             if ($App.UninstallString -match $ProductPattern) { $ProductId = $Matches[1] }
