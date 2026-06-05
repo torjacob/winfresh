@@ -127,8 +127,21 @@ $WinUtilConfigPath = "$env:TEMP\winutil_config.json"
 Invoke-WebRequest -Uri $WinUtilConfigUrl -OutFile $WinUtilConfigPath -ErrorAction SilentlyContinue
 
 if (Test-Path $WinUtilConfigPath) {
-    & ([ScriptBlock]::Create((irm "https://christitus.com/win"))) -Run -Config $WinUtilConfigPath -NoUi
+    Write-Host "Suspending Windows Explorer to prevent shell crash..." -ForegroundColor Yellow
+    Stop-Process -Name "explorer" -Force -ErrorAction SilentlyContinue
+    Start-Sleep -Seconds 2
+
+    try {
+        & ([ScriptBlock]::Create((irm "https://christitus.com/win"))) -Run -NoUi -Config $WinUtilConfigPath
+    } catch {
+        Write-Warning "WinUtil encountered an execution error: $_"
+    } finally {
+        Write-Host "Reviving Windows Explorer shell..." -ForegroundColor Green
+        Start-Process "explorer.exe"
+        Start-Sleep -Seconds 3
+    }
 } else {
+    Write-Host "Config download failed, running basic web script..." -ForegroundColor Yellow
     irm "https://christitus.com/win" | iex
 }
 
