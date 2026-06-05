@@ -14,7 +14,7 @@ if (-not $isAdmin) {
                 iex (irm 'https://raw.githubusercontent.com/torjacob/winfresh/refs/heads/main/winfresh.ps1');
             } catch {
                 Write-Host 'An explicit crash occurred:' -ForegroundColor Red;
-                $_.Exception.Message;
+                `$_.Exception.Message;
             } finally {
                 Stop-Transcript;
             }
