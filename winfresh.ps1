@@ -99,7 +99,13 @@ foreach ($App in $OfficeApps) {
         Write-Host "Uninstalling: $($App.DisplayName)" -ForegroundColor Yellow
         
         if ($App.UninstallString -match "OfficeClickToRun") {
-            Start-Process "C:\Program Files\Common Files\microsoft shared\ClickToRun\OfficeClickToRun.exe" -ArgumentList "scenario=install scenario=repair platform=x64 culture=en-us productreleaseid=none workflow=uninstallDisplay" -NoNewWindow -Wait
+            $ProductPattern = "productstoremove=([^ ]+)"
+            $ProductId = "O365ProPlusRetail" # Reliable generic default fallback
+            if ($App.UninstallString -match $ProductPattern) { $ProductId = $Matches[1] }
+
+            $SilentArgs = "scenario=install scenariosubtype=ARP sourcetype=None productstoremove=$ProductId culture=en-us DisplayLevel=False forceappshutdown=True"
+            
+            Start-Process "C:\Program Files\Common Files\microsoft shared\ClickToRun\OfficeClickToRun.exe" -ArgumentList $SilentArgs -NoNewWindow -Wait
         } else {
             $CleanCmd = $App.UninstallString -replace "msiexec.exe", "" -replace "/I", "" -replace "/X", ""
             $CleanCmd = $CleanCmd.Trim()
