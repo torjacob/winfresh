@@ -83,6 +83,14 @@ Get-AppxPackage -AllUsers -Name "Microsoft.Office.Desktop" | Remove-AppxPackage 
 Get-AppxPackage -AllUsers -Name "*Teams*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue
 
 Write-Host "Checking for Desktop Click-to-Run Office installations..." -ForegroundColor DarkCyan
+
+Write-Host "Clearing hidden background Office locks..." -ForegroundColor DarkCyan
+$OfficeProc = @("winword", "excel", "powerpnt", "outlook", "onenote", "msaccess", "mspub", "teams", "onedrive", "officeclicktorun", "officec2rclient")
+foreach ($Proc in $OfficeProc) {
+    Stop-Process -Name $Proc -Force -ErrorAction SilentlyContinue
+}
+Start-Sleep -Seconds 2
+
 $OfficeUninstallKeys = @(
     "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*",
     "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*"
@@ -90,17 +98,31 @@ $OfficeUninstallKeys = @(
 
 $OfficeApps = Get-ItemProperty $OfficeUninstallKeys | Where-Object { 
     $_.DisplayName -like "*Microsoft 365*" -or 
-    $_.DisplayName -like "*Microsoft Office*" -or 
-    $_.UninstallString -like "*OfficeClickToRun*"
+    $_.DisplayName -like "*Microsoft Office*"
 }
 
 foreach ($App in $OfficeApps) {
     if ($App.UninstallString) {
         Write-Host "Uninstalling: $($App.DisplayName)" -ForegroundColor Yellow
         
-        if ($App.UninstallString -match "OfficeClickToRun") {
-            Start-Process "C:\Program Files\Common Files\microsoft shared\ClickToRun\OfficeClickToRun.exe" -ArgumentList "scenario=install scenario=repair platform=x64 culture=en-us productreleaseid=none workflow=uninstallDisplay" -NoNewWindow -Wait
-        } else {
+        if ($App.QuietUninstallString) {
+            if ($App.QuietUninstallString -match '"([^"]+)"\s*(.*)') {
+                $ExePath = $Matches[1]
+                $RawArgs = $Matches[2]
+                
+                $SilentArgs = "$RawArgs DisplayLevel=False forceappshutdown=True"
+                Start-Process -FilePath $ExePath -ArgumentList $SilentArgs -NoNewWindow -Wait
+            }
+        } 
+        elif ($App.UninstallString -match "OfficeClickToRun") {
+            $ProductPattern = "productstoremove=([^ ]+)"
+            $ProductId = "O365ProPlusRetail"
+            if ($App.UninstallString -match $ProductPattern) { $ProductId = $Matches[1] }
+
+            $SilentArgs = "scenario=install scenariosubtype=ARP sourcetype=None productstoremove=$ProductId culture=en-us DisplayLevel=False forceappshutdown=True"
+            Start-Process "C:\Program Files\Common Files\microsoft shared\ClickToRun\OfficeClickToRun.exe" -ArgumentList $SilentArgs -NoNewWindow -Wait
+        } 
+        else {
             $CleanCmd = $App.UninstallString -replace "msiexec.exe", "" -replace "/I", "" -replace "/X", ""
             $CleanCmd = $CleanCmd.Trim()
             Start-Process "msiexec.exe" -ArgumentList "/X $CleanCmd /qn /norestart" -NoNewWindow -Wait
