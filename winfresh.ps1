@@ -172,7 +172,7 @@ if (Test-Path $WinUtilConfigPath) {
 Write-Host "Running ShutUp10++..." -ForegroundColor Cyan
 
 $OOCfgUrl = "https://raw.githubusercontent.com/torjacob/winfresh/refs/heads/main/oosu10pp.cfg"
-$OOExeUrl = "https://www.oo-software.com/en/download/current/ooshutup10"
+$OOExeUrl = "https://dl5.oo-software.com/files/ooshutup10/OOSU10.exe"
 
 $OODir = "C:\OOSu10"
 New-Item -ItemType Directory -Path $OODir -Force | Out-Null
