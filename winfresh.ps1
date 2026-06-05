@@ -62,9 +62,13 @@ $RegPaths = @(
 
 foreach ($Path in $RegPaths) {
     if (Test-Path $Path) {
-        Get-ItemProperty -Path $Path | Get-Member -MemberType NoteProperty | ForEach-Object {
-            if ($KeepStartupApps -notcontains $_.Name) {
-                Remove-ItemProperty -Path $Path -Name $_.Name -ErrorAction SilentlyContinue
+        $Properties = Get-ItemProperty -Path $Path -ErrorAction SilentlyContinue
+
+        if($null -ne $Properties) {
+            $Properties | Get-Member -MemberType NoteProperty | ForEach-Object {
+                if ($KeepStartupApps -notcontains $_.Name) {
+                    Remove-ItemProperty -Path $Path -Name $_.Name -ErrorAction SilentlyContinue
+                }
             }
         }
     }
