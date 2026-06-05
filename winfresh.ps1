@@ -101,7 +101,7 @@ $WinUtilConfigPath = "$env:TEMP\winutil_config.json"
 Invoke-WebRequest -Uri $WinUtilConfigUrl -OutFile $WinUtilConfigPath -ErrorAction SilentlyContinue
 
 if (Test-Path $WinUtilConfigPath) {
-    & ([ScriptBlock]::Create((irm "https://christitus.com/win"))) -Run -Config $WinUtilConfigPath
+    & ([ScriptBlock]::Create((irm "https://christitus.com/win"))) -Run -Config $WinUtilConfigPath -NoUi
 } else {
     irm "https://christitus.com/win" | iex
 }
