@@ -8,7 +8,6 @@
     "WPFTweaksLocation",
     "WPFTweaksServices",
     "WPFTweaksTelemetry",
-    "WPFTweaksDiskCleanup",
     "WPFTweaksDeleteTempFiles",
     "WPFTweaksEndTaskOnTaskbar",
     "WPFTweaksPowershell7Tele",
@@ -16,6 +15,5 @@
     "WPFTweaksWidget",
     "WPFTweaksRemoveHome",
     "WPFTweaksRemoveOneDrive",
-    "WPFTweaksRightClickMenu",
-    "WPFTweaksXboxRemoval"
+    "WPFTweaksRightClickMenu"
 ]
