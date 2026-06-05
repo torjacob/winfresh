@@ -155,7 +155,7 @@ if (Test-Path $WinUtilConfigPath) {
     $WinUtilArgs = @(
         "-NoProfile",
         "-ExecutionPolicy", "Bypass",
-        "-Command", "& { & ([ScriptBlock]::Create((irm 'https://christitus.com/win'))) -Run -Config '$WinUtilConfigPath' }"
+        "-Command", "& { & ([ScriptBlock]::Create((irm 'https://christitus.com/win'))) -Run -NoUi -Config '$WinUtilConfigPath' }"
     )
     
     Start-Process powershell -ArgumentList $WinUtilArgs -NoNewWindow -Wait
