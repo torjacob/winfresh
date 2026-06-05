@@ -194,7 +194,7 @@ try {
 if (Test-Path "$OODir\oosu10pp.exe") {
     if (Test-Path "$OODir\oosu10pp_config.cfg") {
         Write-Host "Applying ShutUp10++ configuration quietly..." -ForegroundColor Yellow
-        Start-Process -FilePath "$OODir\oosu10pp.exe" -ArgumentList "`"$OODir\oosu10pp_config.cfg`" /g /quiet" -NoNewWindow -Wait
+        Start-Process -FilePath "$OODir\oosu10pp.exe" -ArgumentList "`"$OODir\oosu10pp_config.cfg`" /quiet /nosrp" -NoNewWindow -Wait
     } else {
         Write-Host "Config not found, falling back to basic factory defaults..." -ForegroundColor Yellow
         Start-Process -FilePath "$OODir\oosu10pp.exe" -ArgumentList "/o /quiet" -NoNewWindow -Wait
