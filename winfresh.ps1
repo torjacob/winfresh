@@ -2,14 +2,27 @@ $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIden
 
 if (-not $isAdmin) {
     Write-Host "Not running in an elevated shell. Relaunching as administrator..." -ForegroundColor Yellow
-    
+
     $Arguments = @(
+        "-NoExit", 
         "-NoProfile",
         "-ExecutionPolicy", "Bypass",
-        "-Command", "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; iex (irm 'https://raw.githubusercontent.com/torjacob/winfresh/refs/heads/main/winfresh.ps1') }"
+        "-Command", "& { 
+            Start-Transcript -Path '$env:USERPROFILE\Desktop\winfresh_log.txt' -Append;
+            try {
+                [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; 
+                iex (irm 'https://raw.githubusercontent.com/torjacob/winfresh/refs/heads/main/winfresh.ps1');
+            } catch {
+                Write-Host 'An explicit crash occurred:' -ForegroundColor Red;
+                $_.Exception.Message;
+            } finally {
+                Stop-Transcript;
+            }
+        }"
     )
     
     Start-Process powershell -ArgumentList $Arguments -Verb RunAs
+    Exit
 }
 
 Write-Host "Running as administrator." -ForegroundColor Green
