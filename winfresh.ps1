@@ -179,10 +179,8 @@ New-Item -ItemType Directory -Path $OODir -Force | Out-Null
 
 Write-Host "Downloading fresh application binaries..." -ForegroundColor DarkCyan
 try {
-    $NoCacheHeader = @{"Cache-Control" = "no-cache"; "Pragma" = "no-cache"}
-    
-    Invoke-WebRequest -Uri $OOExeUrl -OutFile "$OODir\oosu10pp.exe" -Headers $NoCacheHeader -ErrorAction Stop
-    Invoke-WebRequest -Uri $OOCfgUrl -OutFile "$OODir\oosu10pp_config.cfg" -Headers $NoCacheHeader -ErrorAction Stop
+    Invoke-WebRequest -Uri $OOExeUrl -OutFile "$OODir\oosu10pp.exe" -ErrorAction SilentlyContinue
+    Invoke-WebRequest -Uri $OOCfgUrl -OutFile "$OODir\oosu10pp_config.cfg" -ErrorAction SilentlyContinue
     
     Start-Sleep -Seconds 2
 } catch {
