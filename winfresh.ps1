@@ -177,8 +177,8 @@ $OOExeUrl = "https://www.oo-software.com/en/download/current/ooshutup10"
 $OODir = "$env:TEMP\OOSu10"
 New-Item -ItemType Directory -Path $OODir -Force | Out-Null
 
-Invoke-WebRequest -Uri $OOExeUrl -OutFile "$OODir\oosu10pp.exe"
-Invoke-WebRequest -Uri $OOCfgUrl -OutFile "$OODir\oosu10pp_config.cfg"
+Invoke-WebRequest -Uri $OOExeUrl -OutFile "$OODir\oosu10pp.exe" -ErrorAction SilentlyContinue
+Invoke-WebRequest -Uri $OOCfgUrl -OutFile "$OODir\oosu10pp_config.cfg" -ErrorAction SilentlyContinue
 
 if (Test-Path "$OODir\oosu10pp_config.cfg") {
     Start-Process -FilePath "$OODir\oosu10pp.exe" -ArgumentList "`"$OODir\oosu10pp_config.cfg`" /g /quiet" -NoNewWindow -Wait
