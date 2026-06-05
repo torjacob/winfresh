@@ -174,7 +174,7 @@ Write-Host "Running ShutUp10++..." -ForegroundColor Cyan
 $OOCfgUrl = "https://raw.githubusercontent.com/torjacob/winfresh/refs/heads/main/oosu10pp.cfg"
 $OOExeUrl = "https://www.oo-software.com/en/download/current/ooshutup10"
 
-$OODir = "$env:TEMP\OOSu10"
+$OODir = "C:\OOSu10"
 New-Item -ItemType Directory -Path $OODir -Force | Out-Null
 
 Invoke-WebRequest -Uri $OOExeUrl -OutFile "$OODir\oosu10pp.exe" -ErrorAction SilentlyContinue
