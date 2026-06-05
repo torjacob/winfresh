@@ -10,7 +10,6 @@ if (-not $isAdmin) {
     )
     
     Start-Process powershell -ArgumentList $Arguments -Verb RunAs
-    exit
 }
 
 Write-Host "Running as administrator." -ForegroundColor Green
