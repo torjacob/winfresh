@@ -177,16 +177,28 @@ $OOExeUrl = "https://www.oo-software.com/en/download/current/ooshutup10"
 $OODir = "C:\OOSu10"
 New-Item -ItemType Directory -Path $OODir -Force | Out-Null
 
-Invoke-WebRequest -Uri $OOExeUrl -OutFile "$OODir\oosu10pp.exe" -ErrorAction SilentlyContinue
-Invoke-WebRequest -Uri $OOCfgUrl -OutFile "$OODir\oosu10pp_config.cfg" -ErrorAction SilentlyContinue
+Write-Host "Downloading fresh application binaries..." -ForegroundColor DarkCyan
+try {
+    $NoCacheHeader = @{"Cache-Control" = "no-cache"; "Pragma" = "no-cache"}
+    
+    Invoke-WebRequest -Uri $OOExeUrl -OutFile "$OODir\oosu10pp.exe" -Headers $NoCacheHeader -ErrorAction Stop
+    Invoke-WebRequest -Uri $OOCfgUrl -OutFile "$OODir\oosu10pp_config.cfg" -Headers $NoCacheHeader -ErrorAction Stop
+    
+    Start-Sleep -Seconds 2
+} catch {
+    Write-Warning "Failed downloading ShutUp10 assets: $_"
+}
 
-Start-Sleep -Seconds 5
-
-if (Test-Path "$OODir\oosu10pp_config.cfg") {
-    Start-Process -FilePath "$OODir\oosu10pp.exe" -ArgumentList "`"$OODir\oosu10pp_config.cfg`" /g /quiet" -NoNewWindow -Wait
+if (Test-Path "$OODir\oosu10pp.exe") {
+    if (Test-Path "$OODir\oosu10pp_config.cfg") {
+        Write-Host "Applying ShutUp10++ configuration quietly..." -ForegroundColor Yellow
+        Start-Process -FilePath "$OODir\oosu10pp.exe" -ArgumentList "`"$OODir\oosu10pp_config.cfg`" /g /quiet" -NoNewWindow -Wait
+    } else {
+        Write-Host "Config not found, falling back to basic factory defaults..." -ForegroundColor Yellow
+        Start-Process -FilePath "$OODir\oosu10pp.exe" -ArgumentList "/o /quiet" -NoNewWindow -Wait
+    }
 } else {
-    Write-Host "Config not found, falling back to GUI..." -ForegroundColor Yellow
-    Start-Process -FilePath "$OODir\oosu10pp.exe" -ArgumentList "/o /quiet" -NoNewWindow -Wait
+    Write-Error "Execution aborted: Executable binary is missing or unreadable."
 }
 
 Write-Host "Deleting temporary files..." -ForegroundColor Cyan
