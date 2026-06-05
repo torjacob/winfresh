@@ -78,9 +78,35 @@ if (Test-Path $PublicDesktop) {
 
 Write-Host "Uninstalling Microsoft Office, Teams, and OneDrive" -ForegroundColor Cyan
 
-Get-Package -Name "*Microsoft Office*" -ErrorAction SilentlyContinue | Uninstall-Package -Force -ErrorAction SilentlyContinue
-Get-Package -Name "*Microsoft Teams*" -ErrorAction SilentlyContinue | Uninstall-Package -Force -ErrorAction SilentlyContinue
+Write-Host "Checking for Microsoft Store Office apps..." -ForegroundColor DarkCyan
+Get-AppxPackage -AllUsers -Name "Microsoft.Office.Desktop" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue
 Get-AppxPackage -AllUsers -Name "*Teams*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue
+
+Write-Host "Checking for Desktop Click-to-Run Office installations..." -ForegroundColor DarkCyan
+$OfficeUninstallKeys = @(
+    "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*",
+    "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*"
+)
+
+$OfficeApps = Get-ItemProperty $OfficeUninstallKeys | Where-Object { 
+    $_.DisplayName -like "*Microsoft 365*" -or 
+    $_.DisplayName -like "*Microsoft Office*" -or 
+    $_.UninstallString -like "*OfficeClickToRun*"
+}
+
+foreach ($App in $OfficeApps) {
+    if ($App.UninstallString) {
+        Write-Host "Uninstalling: $($App.DisplayName)" -ForegroundColor Yellow
+        
+        if ($App.UninstallString -match "OfficeClickToRun") {
+            Start-Process "C:\Program Files\Common Files\microsoft shared\ClickToRun\OfficeClickToRun.exe" -ArgumentList "scenario=install scenario=repair platform=x64 culture=en-us productreleaseid=none workflow=uninstallDisplay" -NoNewWindow -Wait
+        } else {
+            $CleanCmd = $App.UninstallString -replace "msiexec.exe", "" -replace "/I", "" -replace "/X", ""
+            $CleanCmd = $CleanCmd.Trim()
+            Start-Process "msiexec.exe" -ArgumentList "/X $CleanCmd /qn /norestart" -NoNewWindow -Wait
+        }
+    }
+}
 
 $OneDrivePaths = @(
     "$env:SystemRoot\System32\OneDriveSetup.exe",
